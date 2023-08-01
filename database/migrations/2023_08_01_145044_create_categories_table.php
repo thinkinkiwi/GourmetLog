@@ -13,7 +13,9 @@ return new class extends Migration
     {
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
+            $table->string('name'); // カテゴリー名
             $table->timestamps();
+            $table->softDeletes();  // 削除日時：NULL許容のdelete
         });
     }
 

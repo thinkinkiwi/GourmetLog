@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('category_tags', function (Blueprint $table) {
             $table->id();
+            $table->bigInteger('restaurant_id');   // お店IDを追加
+            $table->bigInteger('category_id');     // カテゴリーIDを追加
             $table->timestamps();
         });
     }
