@@ -2,7 +2,7 @@
 <div class="sidebar">
 
     <!-- サイドバータイトル表示（ここから） -->
-    <h3><a href="{{ url('/dashboard') }}">Gourumet Log</a></h3>
+    <h2><a href="{{ url('/dashboard') }}">Gourmet Log</a></h2>
     <!-- サイドバータイトル表示（ここまで） -->
 
     <br>
