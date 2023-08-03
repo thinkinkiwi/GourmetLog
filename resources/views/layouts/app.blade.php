@@ -13,11 +13,17 @@
     <link rel="dns-prefetch" href="//fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
 
+    <!-- サイドバーの表示 -->
+    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+
     <!-- Scripts -->
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 </head>
 <body>
     <div id="app">
+
+        <!-- ログイン後はナビゲーションバーを表示させないためにif節を追記 -->
+        @if(!Auth::check() || Request::is('login'))
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">
                 <a class="navbar-brand" href="{{ url('/') }}">
@@ -71,8 +77,10 @@
                 </div>
             </div>
         </nav>
+        @endif
 
-        <main class="py-4">
+        <!-- サイドバーを上部まで表示するためにmainから「class="py-4"」を削除 -->
+        <main>
             @yield('content')
         </main>
     </div>

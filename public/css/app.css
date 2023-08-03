@@ -1,0 +1,123 @@
+/* コンテンツ全体 */
+.wrapper {
+    display: flex;
+}
+
+/* サイドバー */
+.sidebar {
+    background-color: #0aead7ca;
+    min-width: 200px;
+    min-height: 100vh;
+    text-align: center;
+    color: white;
+    padding-top: 30px; /* Gourumet Logの上に空白を追加 */
+    padding-bottom: 50px; /* ユーザー名の位置を調整 */
+    position: relative;
+}
+
+/* サイドバー　タイトル */
+.sidebar h3 {
+    margin: 0;
+    padding: 10px 0;
+}
+
+/* サイドバー　pタグ */
+.sidebar p {
+    margin: 10px 0; /* 上下の余白を10pxに設定 */
+}
+
+
+/* MENUを囲う水平線 */
+.sidebar hr {
+    border: 0;
+    height: 5px;
+    background: white;
+    margin: 5px 0;
+}
+
+/* サイドバー　リスト */
+.sidebar ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+/* サイドバー　リストリンク文字 */
+.sidebar ul li {
+    list-style: none;
+    padding: 10px;
+}
+
+/* サイドバー　リンク文字 */
+.sidebar a {
+    text-decoration: none;
+    color: white;
+    display: block;
+    padding: 10px;
+}
+
+/* サイドバー　ホバー時 */
+.sidebar a:hover {
+    background: white;
+    color: #000000;
+}
+
+/* メインコンテンツ */
+.mainContents {
+    margin: 0;
+    width: 100%;
+    background: white; /* メインコンテンツの背景色 */
+}
+
+/* メインヘッダ */
+.mainHeader {
+    padding: 10px; /* ヘッダーの余白 */
+    text-align: left; /* ヘッダーを左寄せに */
+}
+
+/* メインボディ */
+.mainBody {
+    min-height: 100vh;
+    padding: 20px; /* メインボディの余白 */
+}
+
+/* ログインしたユーザーネーム */
+.user-name {
+    position: absolute;
+    bottom: 150px;
+    left: 0;
+    width: 100%;
+    padding: 0;
+}
+
+/* ドロップダウンで表示される文字 */
+.user-dropdown {
+    padding: 10px;
+    display: block;
+    color: white;
+    margin: 0;
+}
+
+/* ログアウトの文字 */
+.logout-text {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: #042b286a;
+    text-align: center;
+    margin: 0;
+}
+
+/* ログアウトのリンク文字 */
+.logout-text a {
+    color: white;
+    padding: 10px;
+    display: block;
+}
+
+/* カーソル上乗せ時のログアウト文字 */
+.user-name:hover .logout-text {
+    display: block;
+}
