@@ -23,10 +23,30 @@
             </div>
 
             <!-- お店リスト（ここから） -->
-            <div>
-                
-            </div>
-            <!-- お店リスト（ここまで） -->
+            <table class="table table-bordered table-striped">
+            <tr>
+                <th>ID</th>
+                <th>店名</th>
+                <th>レビュー</th>
+                <th>コメント</th>
+                <th>詳細</th>
+                <th>編集</th>
+                <th>削除</th>
+            </tr>
+            @foreach ($restaurants as $restaurant)
+            <tr>
+                <!-- コメント部分は10文字で…表記になるように制限付与 -->
+                <td>{{ $restaurant->id }}</td>
+                <td>{{ $restaurant->name }}</td>
+                <td>{{ $restaurant->review }}</td>
+                <td>{{ \Illuminate\Support\Str::limit($restaurant->comment, 10) }}</td>
+                <td><a href="#" class="btn btn-success">詳細</a></td>
+                <td><a href="#" class="btn btn-primary">編集</a></td>
+                <td><a href="#" class="btn btn-danger">削除</a></td>
+            </tr>
+            @endforeach
+        </table>
+        <!-- お店リスト（ここまで） -->
             
         </div>
         <!-- メインボディ（ここまで） -->

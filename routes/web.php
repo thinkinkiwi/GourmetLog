@@ -21,9 +21,7 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 });
 
-Route::get('/list', function () {
-    return view('list');
-});
+Route::get('/list', [App\Http\Controllers\ShopController::class, 'index']);
 
 Auth::routes();
 
