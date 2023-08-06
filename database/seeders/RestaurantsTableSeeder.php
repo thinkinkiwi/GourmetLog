@@ -23,6 +23,7 @@ class RestaurantsTableSeeder extends Seeder
                 'name' => $faker->name,
                 'name_katakana' => $faker->name,
                 'review' => $faker->randomDigit,
+                'phone_number' => $faker->phoneNumber,
                 'comment' => $faker->text,
                 'food_picture' => $faker->imageUrl(),
                 'map_url' => $faker->url,

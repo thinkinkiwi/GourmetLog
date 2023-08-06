@@ -8,4 +8,16 @@ use Illuminate\Database\Eloquent\Model;
 class CategoryTag extends Model
 {
     use HasFactory;
+
+    // restaurantsテーブルとのリレーション
+    public function restaurant()
+    {
+        return $this->belongsTo(Restaurant::class);
+    }
+
+    // categoriesテーブルとのリレーション
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
 }

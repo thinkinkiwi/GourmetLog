@@ -121,3 +121,10 @@
 .user-name:hover .logout-text {
     display: block;
 }
+
+/* 地図とGoogleマップの画像サイズを統一 */
+.image-map-size {
+    width: 400px;
+    height: 400px;
+}
+

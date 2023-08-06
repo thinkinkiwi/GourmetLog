@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('name')->nullable();          // 店名
             $table->string('name_katakana')->nullable(); // フリガナ
             $table->integer('review')->nullable();       // レビュー
+            $table->string('phone_number')->nullable();  // 電話番号
             $table->string('comment')->nullable();       // コメント
             $table->string('food_picture')->nullable();  // 料理画像
             $table->string('map_url')->nullable();       // Google map URL

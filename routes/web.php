@@ -23,6 +23,8 @@ Route::get('/dashboard', function () {
 
 Route::get('/list', [App\Http\Controllers\ShopController::class, 'index']);
 
+Route::get('/detail/{shop_id}', [App\Http\Controllers\ShopController::class, 'detail']);
+
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
