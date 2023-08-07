@@ -9,9 +9,9 @@ class Category extends Model
 {
     use HasFactory;
 
-    // category＿tagsテーブルとのリレーション
-    public function categoryTags()
+    // category＿tagsテーブルを中間テーブルとしたrestaurantsテーブルとのリレーション
+    public function restaurants()
     {
-        return $this->hasMany(CategoryTag::class);
+        return $this->belongsToMany(Restaurant::class, 'category_tags');
     }
 }

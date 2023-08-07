@@ -41,7 +41,7 @@
                 <td>{{ $restaurant->review }}</td>
                 <td>{{ \Illuminate\Support\Str::limit($restaurant->comment, 10) }}</td>
                 <td><a href="{{ url('detail/'.$restaurant->id) }}" class="btn btn-success">詳細</a></td>
-                <td><a href="#" class="btn btn-primary">編集</a></td>
+                <td><a href="{{ url('edit/' . $restaurant->id) }}" class="btn btn-primary">編集</a></td>
                 <td><a href="#" class="btn btn-danger">削除</a></td>
             </tr>
             @endforeach

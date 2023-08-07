@@ -16,7 +16,7 @@
     <!-- MENUコンテンツ表示（ここから） -->
     <ul>
         <li><a href="{{ url('/list') }}">お店リスト</a></li>
-        <li><a href="{{ url('/edit') }}">お店登録/編集</a></li>
+        <li><a href="{{ route('edit') }}">お店登録/編集</a></li>
         <li><a href="{{ url('/category') }}">カテゴリー管理</a></li>
     </ul>
     <!-- MENUコンテンツ表示（ここまで） -->

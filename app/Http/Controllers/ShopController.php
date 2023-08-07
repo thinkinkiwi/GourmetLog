@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Restaurant;
 use App\Models\Users;
+use App\Models\Category;
+use Validator;
 use Auth;
 
 class ShopController extends Controller
@@ -17,22 +19,166 @@ class ShopController extends Controller
     }
     // ユーザーごとに情報を区別するためのログイン認証コンストラクタ（ここまで）
 
-    // 一覧表示（ここから）
+    // 一覧表示：indexメソッド（ここから）
     public function index()
     {
         $user_id = Auth::id();
         $restaurants = Restaurant::where('user_id', $user_id)->get();
         return view('list', ['restaurants' => $restaurants]);
     }
-    // 一覧表示（ここまで）
+    // 一覧表示：indexメソッド（ここまで）
 
-    // お店詳細表示(ここから)
+    // お店詳細表示：detailメソッド（ここから）
     public function detail($shop_id)
     {
         $user_id = Auth::id();
         $restaurant = Restaurant::where('user_id', $user_id)->find($shop_id);
         return view('detail', ['restaurant' => $restaurant]);
     }
-    // お店詳細表示(ここまで)
+    // お店詳細表示：detailメソッド（ここまで）
 
+    // お店登録の画面表示：editメソッド（ここから）
+    public function edit($shop_id = null)
+    {
+        $restaurant = $shop_id ? Restaurant::find($shop_id) : new Restaurant;
+        $categories = Category::all();
+
+        return view('edit', ['restaurant' => $restaurant, 'categories' => $categories]);
+    }
+    // お店登録の画面表示：editメソッド（ここまで）
+
+    // 登録：storeメソッド（ここから）
+    public function store(Request $request, $shop_id = null)
+    {
+        // バリデーション（ここから）
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:20',
+            'name_katakana' => 'required|regex:/^[ァ-ヶー\s]+$/u',
+            'categories' => 'nullable|array',
+            'review' => 'required|integer|min:1|max:5',
+            'food_picture' => 'nullable|image|max:5120',
+            'map_url' => 'nullable|url',
+            'phone_number' => 'nullable|digits_between:10,15',
+            'comment' => 'required|string|max:300',
+        ]);
+        // バリデーション（ここまで）
+
+        // バリデーションエラー時（ここから）
+        if ($validator->fails()) {
+            return redirect()->route('edit', ['shop_id' => $shop_id])
+                ->withInput()
+                ->withErrors($validator);
+        }
+        // バリデーションエラー時（ここまで）
+
+        // 登録処理（ここから）
+        $restaurant = $shop_id ? Restaurant::find($shop_id) : new Restaurant;
+        $restaurant->user_id = Auth::id();
+        $restaurant->name = $request->input('name');
+        $restaurant->name_katakana = $request->input('name_katakana');
+        $restaurant->categories()->sync($request->input('categories'));
+        $restaurant->review = $request->input('review');
+        if ($request->hasFile('food_picture')) {
+            $file = $request->file('food_picture');
+        
+            // 画像の拡張子を取得
+            $extension = $file->getClientOriginalExtension();
+        
+            // 保存するファイル名を生成（タイムスタンプと拡張子を組み合わせています）
+            $filename = time() . '.' . $extension;
+        
+            // 画像を保存するパス（publicディレクトリ内のimagesフォルダ）
+            $path = public_path('images');
+        
+            // 画像を保存
+            $file->move($path, $filename);
+        
+            // データベースにファイルパスを保存
+            $restaurant->food_picture = 'images/' . $filename;
+        }
+        $restaurant->map_url = $request->input('map_url');
+        $restaurant->phone_number = $request->input('phone_number');
+        $restaurant->comment = $request->input('comment');
+        // 登録処理（ここまで）
+
+        $restaurant->save();
+
+        // confirmにデータを保持したまま遷移
+        return view('confirm', ['data' => $data]);
+
+    }
+    // 登録：storeメソッド（ここまで）
+    
+    // 確認画面の表示：confirmメソッド（ここから）
+    public function confirm(Request $request)
+    {
+        $data = $request->all();
+        
+        // カテゴリーが選択されていない場合、空の配列を設定
+        $data['categories'] = $request->input('categories', []);
+        // バリデーション（ここから）
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:20',
+            'name_katakana' => 'required|regex:/^[ァ-ヶー\s]+$/u',
+            'categories' => 'nullable|array',
+            'review' => 'required|integer|min:1|max:5',
+            'food_picture' => 'nullable|image|max:5120',
+            'map_url' => 'nullable|url',
+            'phone_number' => 'nullable|digits_between:10,15',
+            'comment' => 'required|string|max:300',
+        ]);
+        // バリデーション（ここまで）
+
+        // バリデーションエラー時（ここから）
+        if ($validator->fails()) {
+            return redirect()->route('edit', ['shop_id' => $shop_id])
+                ->withInput()
+                ->withErrors($validator);
+        }
+        // バリデーションエラー時（ここまで）
+
+        // confirmにデータを保持したまま遷移
+        return view('confirm', ['data' => $data]);
+    }
+    // 確認画面の表示：confirmメソッド（ここから）
+
+    // 確認画面の処理：finalizeメソッド（ここから）
+    public function finalize(Request $request, $shop_id = null)
+    {
+
+        $restaurant = $shop_id ? Restaurant::find($shop_id) : new Restaurant;
+        $restaurant->user_id = Auth::id();
+        $restaurant->name = $request->input('name');
+        $restaurant->name_katakana = $request->input('name_katakana');
+        $restaurant->categories()->sync($request->input('categories'));
+        $restaurant->review = $request->input('review');
+        if ($request->hasFile('food_picture')) {
+            $file = $request->file('food_picture');
+        
+            // 画像の拡張子を取得
+            $extension = $file->getClientOriginalExtension();
+        
+            // 保存するファイル名を生成（タイムスタンプと拡張子を組み合わせています）
+            $filename = time() . '.' . $extension;
+        
+            // 画像を保存するパス（publicディレクトリ内のimagesフォルダ）
+            $path = public_path('images');
+        
+            // 画像を保存
+            $file->move($path, $filename);
+        
+            // データベースにファイルパスを保存
+            $restaurant->food_picture = 'images/' . $filename;
+        }
+        $restaurant->map_url = $request->input('map_url');
+        $restaurant->phone_number = $request->input('phone_number');
+        $restaurant->comment = $request->input('comment');
+
+        // データ更新（保存）
+        $restaurant->save();
+
+        // listに戻す
+        return redirect('/list');
+    }
+    // 確認画面の処理：finalizeメソッド（ここまで）
 }

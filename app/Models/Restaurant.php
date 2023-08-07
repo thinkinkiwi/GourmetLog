@@ -15,9 +15,9 @@ class Restaurant extends Model
         return $this->belongsTo(User::class);
     }
 
-    // category_tagsテーブルとのリレーション
-    public function categoryTags()
+    // category_tagsテーブルを中間テーブルとしたcategoriesテーブルとのリレーション
+    public function categories()
     {
-        return $this->hasMany(CategoryTag::class);
+        return $this->belongsToMany(Category::class, 'category_tags');
     }
 }
