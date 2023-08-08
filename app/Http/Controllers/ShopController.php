@@ -112,10 +112,13 @@ class ShopController extends Controller
     // 確認画面の表示：confirmメソッド（ここから）
     public function confirm(Request $request)
     {
+        // 入力された情報と渡されたshop_idを取得する
         $data = $request->all();
+        $shop_id = $request->input('shop_id');
         
         // カテゴリーが選択されていない場合、空の配列を設定
         $data['categories'] = $request->input('categories', []);
+        
         // バリデーション（ここから）
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:20',
@@ -138,14 +141,22 @@ class ShopController extends Controller
         // バリデーションエラー時（ここまで）
 
         // confirmにデータを保持したまま遷移
-        return view('confirm', ['data' => $data]);
+        return view('confirm', [
+            'data' => $data,
+            'shop_id' => $shop_id
+        ]);
     }
     // 確認画面の表示：confirmメソッド（ここから）
 
     // 確認画面の処理：finalizeメソッド（ここから）
     public function finalize(Request $request, $shop_id = null)
     {
+        // confirmからshop_idを受け取る
+        $shop_id = $request->input('shop_id');
 
+        // dd($shop_id);
+
+        // shop_idの有無で新規 | 既存を判別、新規ならインスタンス生成
         $restaurant = $shop_id ? Restaurant::find($shop_id) : new Restaurant;
         $restaurant->user_id = Auth::id();
         $restaurant->name = $request->input('name');
@@ -178,7 +189,7 @@ class ShopController extends Controller
         $restaurant->save();
 
         // listに戻す
-        return redirect('/list');
+        return redirect('list');
     }
     // 確認画面の処理：finalizeメソッド（ここまで）
 }

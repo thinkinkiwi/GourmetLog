@@ -15,9 +15,9 @@
 
         <!-- メインボディ（ここから） -->
         <!-- 確認画面：フォーム（ここから） -->
-        <form action="{{ route('finalize', $restaurant->id ?? null) }}" method="post">
+        <form action="{{ route('finalize', ['shop_id' => $data['id'] ?? null]) }}" method="post">
         @csrf
-        @if(isset($data['shop_id']))
+        @if(isset($data['id']))
             @method('PUT')
         @endif
 
@@ -51,6 +51,10 @@
         @foreach($data['categories'] as $categoryId)
             <input type="hidden" name="categories[]" value="{{ $categoryId }}">
         @endforeach
+
+        @if($shop_id)
+        <input type="hidden" name="shop_id" value="{{ $shop_id }}">
+        @endif
         <!-- 隠しフィールド（ここまで） -->
 
         <!-- 修正・登録ボタン（ここから） -->
