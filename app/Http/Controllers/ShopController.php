@@ -23,10 +23,32 @@ class ShopController extends Controller
     public function index()
     {
         $user_id = Auth::id();
-        $restaurants = Restaurant::where('user_id', $user_id)->get();
+        $restaurants = Restaurant::where('user_id', $user_id)
+        ->orderBy('id')
+        ->paginate(10);
+        
         return view('list', ['restaurants' => $restaurants]);
     }
     // 一覧表示：indexメソッド（ここまで）
+
+    // 検索機能：searchメソッド（ここから）
+    public function search(Request $request)
+    {
+        $search = $request->input('search');
+
+        if ($search) {
+            $restaurants = Restaurant::where('name', 'LIKE', '%' . $search . '%')
+                ->orWhere('comment', 'LIKE', '%' . $search . '%')
+                ->orderBy('id')
+                ->paginate(10);
+        } else {
+            $restaurants = Restaurant::orderBy('id')
+            ->paginate(10);
+        }
+
+        return view('list', ['restaurants' => $restaurants]);
+    }
+    // 検索機能：searchメソッド（ここまで）
 
     // お店詳細表示：detailメソッド（ここから）
     public function detail($shop_id)
@@ -108,7 +130,9 @@ class ShopController extends Controller
         $restaurant->save();
 
         // confirmにデータを保持したまま遷移
-        return view('confirm', ['restaurant' => $restaurant]);
+        return view('confirm', [
+            'restaurant' => $restaurant
+        ]);
 
     }
     // 登録：storeメソッド（ここまで）

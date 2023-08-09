@@ -19,7 +19,10 @@
 
             <!-- 検索窓・ボタン設置場所 -->
             <div>
-
+                <form action="{{ url('list') }}" method="GET">
+                    <input type="text" name="search" placeholder="ここにキーワードを入力してください">
+                    <button type="submit" class="btn btn-outline-dark">検索</button>
+                </form>
             </div>
 
             <!-- お店リスト（ここから） -->
@@ -47,6 +50,9 @@
             @endforeach
         </table>
         <!-- お店リスト（ここまで） -->
+
+        <!-- ページネーションのページ選択 -->
+        {{ $restaurants->links('pagination::bootstrap-5') }}
             
         </div>
         <!-- メインボディ（ここまで） -->

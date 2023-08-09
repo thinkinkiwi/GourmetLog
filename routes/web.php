@@ -25,6 +25,9 @@ Route::get('/dashboard', function () {
 // 一覧表示
 Route::get('/list', [App\Http\Controllers\ShopController::class, 'index']);
 
+// 検索機能
+Route::get('/list', [App\Http\Controllers\ShopController::class, 'search']);
+
 // お店詳細ページ表示
 Route::get('/detail/{shop_id}', [App\Http\Controllers\ShopController::class, 'detail']);
 
