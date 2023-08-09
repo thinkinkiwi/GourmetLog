@@ -108,7 +108,7 @@ class ShopController extends Controller
         $restaurant->save();
 
         // confirmにデータを保持したまま遷移
-        return view('confirm', ['data' => $data]);
+        return view('confirm', ['restaurant' => $restaurant]);
 
     }
     // 登録：storeメソッド（ここまで）
@@ -117,11 +117,11 @@ class ShopController extends Controller
     public function confirm(Request $request, $shop_id = null)
     {
         // 入力された情報と渡されたshop_idを取得する
-        $data = $request->all();
+        $restaurant = $request->all();
         $shop_id = $request->input('shop_id');
         
         // カテゴリーが選択されていない場合、空の配列を設定
-        $data['categories'] = $request->input('categories', []);
+        $restaurant['categories'] = $request->input('categories', []);
         
         // バリデーション（ここから）
         $validator = Validator::make($request->all(), [
@@ -146,7 +146,7 @@ class ShopController extends Controller
 
         // confirmにデータを保持したまま遷移
         return view('confirm', [
-            'data' => $data,
+            'restaurant' => $restaurant,
             'shop_id' => $shop_id
         ]);
     }

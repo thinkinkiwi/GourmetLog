@@ -15,40 +15,37 @@
 
         <!-- メインボディ（ここから） -->
         <!-- 確認画面：フォーム（ここから） -->
-        <form action="{{ route('finalize', ['shop_id' => $data['id'] ?? null]) }}" method="post">
+        <form action="{{ route('finalize', ['shop_id' => $shop_id ?? null]) }}" method="post" enctype="multipart/form-data">
         @csrf
-        @if(isset($data['id']))
-            @method('PUT')
-        @endif
 
         <!-- 確認画面（ここから） -->
-        <p>店名: {{ $data['name'] }}</p>
-        <p>フリガナ: {{ $data['name_katakana'] }}</p>
+        <p>店名: {{ $restaurant['name'] }}</p>
+        <p>フリガナ: {{ $restaurant['name_katakana'] }}</p>
         <p>カテゴリー:
-            @foreach($data['categories'] as $categoryId)
+            @foreach($restaurant['categories'] as $categoryId)
                 {{ $categories->where('id', $categoryId)->first()->name }} 
             @endforeach
         </p>
-        <p>レビュー: {{ $data['review'] }}</p>
-        <p>電話番号: {{ $data['phone_number'] }}</p>
-        <p>コメント: {{ $data['comment'] }}</p>
-        @if(isset($data['food_picture']))
-        <img src="{{ asset('storage/' . $data['food_picture']) }}" alt="Food Picture">
+        <p>レビュー: {{ $restaurant['review'] }}</p>
+        <p>電話番号: {{ $restaurant['phone_number'] }}</p>
+        <p>コメント: {{ $restaurant['comment'] }}</p>
+        @if(isset($restaurant['food_picture']))
+        <img src="{{ asset('storage/' . $restaurant['food_picture']) }}" alt="Food Picture">
         @endif
-        <p>Google Map URL: <a href="{{ $data['map_url'] }}" target="_blank">{{ $data['map_url'] }}</a></p>
+        <p>Google Map URL: <a href="{{ $restaurant['map_url'] }}" target="_blank">{{ $restaurant['map_url'] }}</a></p>
         <!-- 確認画面（ここまで） -->
 
         <!-- 隠しフィールド（ここから） -->
-        <input type="hidden" name="name" value="{{ $data['name'] }}">
-        <input type="hidden" name="name_katakana" value="{{ $data['name_katakana'] }}">
-        <input type="hidden" name="review" value="{{ $data['review'] }}">
-        @if(isset($data['food_picture']))
-        <input type="hidden" name="food_picture" value="{{ $data['food_picture'] }}">
+        <input type="hidden" name="name" value="{{ $restaurant['name'] }}">
+        <input type="hidden" name="name_katakana" value="{{ $restaurant['name_katakana'] }}">
+        <input type="hidden" name="review" value="{{ $restaurant['review'] }}">
+        @if(isset($restaurant['food_picture']))
+        <input type="hidden" name="food_picture" value="{{ $restaurant['food_picture'] }}">
         @endif
-        <input type="hidden" name="map_url" value="{{ $data['map_url'] }}">
-        <input type="hidden" name="phone_number" value="{{ $data['phone_number'] }}">
-        <input type="hidden" name="comment" value="{{ $data['comment'] }}">
-        @foreach($data['categories'] as $categoryId)
+        <input type="hidden" name="map_url" value="{{ $restaurant['map_url'] }}">
+        <input type="hidden" name="phone_number" value="{{ $restaurant['phone_number'] }}">
+        <input type="hidden" name="comment" value="{{ $restaurant['comment'] }}">
+        @foreach($restaurant['categories'] as $categoryId)
             <input type="hidden" name="categories[]" value="{{ $categoryId }}">
         @endforeach
 
