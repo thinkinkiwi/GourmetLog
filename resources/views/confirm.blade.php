@@ -58,7 +58,7 @@
         <!-- 隠しフィールド（ここまで） -->
 
         <!-- 修正・登録ボタン（ここから） -->
-        <p><a href="#" class="btn btn-outline-dark">修正する</a></p>
+        <button type="submit"  name='back' value="back" class="btn btn-outline-dark">修正する</button>
         <button type="submit" class="btn btn-primary">登録する</button>
         <!-- 修正・登録ボタン（ここまで） -->
 

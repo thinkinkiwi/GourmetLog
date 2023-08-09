@@ -38,7 +38,7 @@ Route::match(['post', 'put'], '/store/{shop_id?}', [App\Http\Controllers\ShopCon
 Route::put('/store/{shop_id}', [App\Http\Controllers\ShopController::class, 'store'])->name('store.update');
 
 // 更新処理の確認画面
-Route::post('/confirm', [App\Http\Controllers\ShopController::class, 'confirm'])->name('confirm');
+Route::post('/confirm/{shop_id?}', [App\Http\Controllers\ShopController::class, 'confirm'])->name('confirm');
 
 // 確認画面後の登録処理
 // Route::put('/finalize/{shop_id?}', [App\Http\Controllers\ShopController::class, 'finalize'])->name('finalize');

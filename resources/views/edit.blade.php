@@ -15,7 +15,7 @@
 
         <!-- メインボディ（ここから） -->
         <!-- 登録/編集フォーム（ここから） -->
-        <form action="{{ route('confirm') }}" method="post" enctype="multipart/form-data">
+        <form action="{{ route('confirm', ['shop_id' => $shop_id]) }}" method="post" enctype="multipart/form-data">
         @csrf
         @if(isset($restaurant) && $restaurant->id)
             <input type="hidden" name="shop_id" value="{{ $restaurant->id }}">
@@ -115,6 +115,7 @@
                 @enderror
             </div>
 
+            <input type="hidden" name="shop_id" value="{{ $shop_id }}">
             <button type="submit" class="btn btn-outline-dark">確認画面へ</button>
             <!-- 登録/編集画面（ここまで） -->
 

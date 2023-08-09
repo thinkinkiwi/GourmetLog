@@ -43,7 +43,11 @@ class ShopController extends Controller
         $restaurant = $shop_id ? Restaurant::find($shop_id) : new Restaurant;
         $categories = Category::all();
 
-        return view('edit', ['restaurant' => $restaurant, 'categories' => $categories]);
+        return view('edit', [
+            'restaurant' => $restaurant, 
+            'categories' => $categories,
+            'shop_id' => $shop_id
+        ]);
     }
     // お店登録の画面表示：editメソッド（ここまで）
 
@@ -110,7 +114,7 @@ class ShopController extends Controller
     // 登録：storeメソッド（ここまで）
     
     // 確認画面の表示：confirmメソッド（ここから）
-    public function confirm(Request $request)
+    public function confirm(Request $request, $shop_id = null)
     {
         // 入力された情報と渡されたshop_idを取得する
         $data = $request->all();
@@ -184,6 +188,12 @@ class ShopController extends Controller
         $restaurant->map_url = $request->input('map_url');
         $restaurant->phone_number = $request->input('phone_number');
         $restaurant->comment = $request->input('comment');
+
+        // 「修正する」ボタン押下時にデータを保持したまま編集画面（/edit/{$shop_id}）に戻す
+        if($request->input('back') == 'back'){
+            return redirect()->route('edit', ['shop_id' => $shop_id])
+                        ->withInput();
+        }
 
         // データ更新（保存）
         $restaurant->save();
