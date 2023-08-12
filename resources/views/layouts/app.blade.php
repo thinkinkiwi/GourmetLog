@@ -16,6 +16,9 @@
     <!-- サイドバーの表示 -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 
+    <!-- jQuery呼び出し -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+
     <!-- Scripts -->
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 </head>

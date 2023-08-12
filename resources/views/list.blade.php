@@ -45,7 +45,7 @@
                 <td>{{ \Illuminate\Support\Str::limit($restaurant->comment, 10) }}</td>
                 <td><a href="{{ url('detail/'.$restaurant->id) }}" class="btn btn-success">詳細</a></td>
                 <td><a href="{{ url('edit/' . $restaurant->id) }}" class="btn btn-primary">編集</a></td>
-                <td><a href="#" class="btn btn-danger">削除</a></td>
+                <td><button class="btn btn-danger" onclick="shopDelete({{ $restaurant->id }})">削除</button></td>
             </tr>
             @endforeach
         </table>
@@ -63,3 +63,31 @@
 </div>
 <!-- コンテンツ大枠(ここまで) -->
 @endsection
+
+<!-- 削除確認ウィンドウを表示するJS（ここから） -->
+<script>
+    function shopDelete(shop_id) {
+        // 確認ウィンドウを表示
+        if (confirm('本当に削除してもよろしいですか？')) {
+            // OK→削除実行（destroy）
+            $.ajax({
+                url: `{{ url('delete') }}/${shop_id}`,
+                type: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                },
+                success: function (data) {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        alert('削除に失敗しました');
+                    }
+                },
+                error: function () {
+                    alert('エラーが発生しました');
+                }
+            });
+        }
+    }
+</script>
+<!-- 削除確認ウィンドウを表示するJS（ここまで） -->

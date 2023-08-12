@@ -44,8 +44,10 @@ Route::put('/store/{shop_id}', [App\Http\Controllers\ShopController::class, 'sto
 Route::post('/confirm/{shop_id?}', [App\Http\Controllers\ShopController::class, 'confirm'])->name('confirm');
 
 // 確認画面後の登録処理
-// Route::put('/finalize/{shop_id?}', [App\Http\Controllers\ShopController::class, 'finalize'])->name('finalize');
 Route::post('/finalize/{shop_id?}', [App\Http\Controllers\ShopController::class, 'finalize'])->name('finalize');
+
+// 削除機能
+Route::delete('/delete/{shop_id}', [App\Http\Controllers\ShopController::class, 'destroy']);
 
 Auth::routes();
 

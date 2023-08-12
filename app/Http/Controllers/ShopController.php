@@ -226,4 +226,17 @@ class ShopController extends Controller
         return redirect('list');
     }
     // 確認画面の処理：finalizeメソッド（ここまで）
+
+    // 削除：destroyメソッド（ここから）
+    public function destroy($shop_id){
+        $restaurant = Restaurant::where('id', $shop_id)->where('user_id', Auth::user()->id)->first();
+    
+        if($restaurant) {
+            $restaurant->delete();
+        return response()->json(['success' => true]);
+        }
+        return response()->json(['success' => false]);
+    
+    }
+    // 削除：destroyメソッド（ここまで）
 }
