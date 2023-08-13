@@ -49,6 +49,21 @@ Route::post('/finalize/{shop_id?}', [App\Http\Controllers\ShopController::class,
 // 削除機能
 Route::delete('/delete/{shop_id}', [App\Http\Controllers\ShopController::class, 'destroy']);
 
+// カテゴリー一覧表示
+Route::get('/category', [App\Http\Controllers\CategoryController::class, 'indexCategories']);
+
+// カテゴリー登録処理
+Route::post('/category/store', [App\Http\Controllers\CategoryController::class, 'storeCategory']);
+
+// カテゴリー編集のためのカテゴリーidの取得
+Route::get('/category/get/{category_id}', [App\Http\Controllers\CategoryController::class, 'getCategory']);
+
+// カテゴリー更新処理
+Route::put('/category/update/{category_id}', [App\Http\Controllers\CategoryController::class, 'updateCategory']);
+
+// カテゴリー削除処理
+Route::delete('/category/delete/{category_id}', [App\Http\Controllers\CategoryController::class, 'destroyCategory']);
+
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

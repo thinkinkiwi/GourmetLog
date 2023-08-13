@@ -17,7 +17,13 @@
         <div class="mainBody">
             <h3>{{ $restaurant->name }} 詳細</h3>
             <p>フリガナ： {{ $restaurant->name_katakana }}</p>
-            <p>カテゴリー： {{ $restaurant->category->name ?? '未分類' }}</p>
+            <p>カテゴリー：
+            @if($restaurant->categories->isEmpty())
+                未分類
+            @else
+                {{ $restaurant->categories->pluck('name')->implode(', ') }}
+            @endif
+            </p>
             <p>レビュー： {{ $restaurant->review }}</p>
             <p>画像：<br>
             <img src="{{ $restaurant->food_picture }}" alt="{{ $restaurant->name }}" class="image-map-size"></p>

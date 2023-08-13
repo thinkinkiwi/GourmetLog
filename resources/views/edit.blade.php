@@ -15,7 +15,9 @@
 
         <!-- メインボディ（ここから） -->
         <!-- 登録/編集フォーム（ここから） -->
-        <form action="{{ route('confirm', ['shop_id' => $shop_id]) }}" method="post" enctype="multipart/form-data">
+        <form action="{{ route('confirm', ['shop_id' => $shop_id]) }}" 
+              method="post"
+              enctype="multipart/form-data">
         @csrf
         @if(isset($restaurant) && $restaurant->id)
             <input type="hidden" name="shop_id" value="{{ $restaurant->id }}">
@@ -46,12 +48,17 @@
                 @enderror
             </div>
 
+            <!-- チェックがついたカテゴリーを配列に格納、カテゴリーの名前を取り出す -->
             <div>
                 <label for="category">カテゴリー:</label>
                 @foreach ($categories as $category)
-                <input type="checkbox" 
-                    name="categories[]" 
-                    value="{{ $category->id }}" {{ in_array($category->id, old('categories', $restaurant->categories->pluck('id')->toArray() ?? [])) ? 'checked' : '' }}> {{ $category->name }}
+                    <input type="checkbox" 
+                           name="categories[]" 
+                           value="{{ $category->id }}" 
+                           {{ in_array(
+                            $category->id, $selected_categories) ? 'checked' : '' 
+                           }}
+                           > {{ $category->name }}
                 @endforeach
                 @error('categories')
                     <div>{{ $message }}</div>
@@ -62,7 +69,11 @@
                 <label for="review">レビュー:</label>
                 <select name="review" id="review" required>
                     @foreach(range(1, 5) as $review)
-                        <option value="{{ $review }}" {{ old('review', $restaurant->review) == $review ? 'selected' : '' }}>{{ $review }}</option>
+                        <option value="{{ $review }}" {{ 
+                            old('review', 
+                            $restaurant
+                            ->review) == $review ? 'selected' : '' 
+                        }}>{{ $review }}</option>
                     @endforeach
                 </select>
                 @error('review')
@@ -116,6 +127,7 @@
             </div>
 
             <input type="hidden" name="shop_id" value="{{ $shop_id }}">
+            
             <button type="submit" class="btn btn-outline-dark">確認画面へ</button>
             <!-- 登録/編集画面（ここまで） -->
 

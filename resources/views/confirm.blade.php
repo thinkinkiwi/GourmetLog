@@ -22,9 +22,13 @@
         <p>店名: {{ $restaurant['name'] }}</p>
         <p>フリガナ: {{ $restaurant['name_katakana'] }}</p>
         <p>カテゴリー:
-            @foreach($restaurant['categories'] as $categoryId)
-                {{ $categories->where('id', $categoryId)->first()->name }} 
-            @endforeach
+            @if(isset($restaurant['categories']) && is_array($restaurant['categories']) && !empty($restaurant['categories']))
+                @foreach($restaurant['categories'] as $categoryId)
+                    {{ $categories->where('id', $categoryId)->first()->name }}
+                @endforeach
+            @else
+                未分類
+            @endif
         </p>
         <p>レビュー: {{ $restaurant['review'] }}</p>
         <p>電話番号: {{ $restaurant['phone_number'] }}</p>

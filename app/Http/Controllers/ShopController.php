@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Restaurant;
 use App\Models\Users;
 use App\Models\Category;
+use App\Models\CategoryTags;
 use Validator;
 use Auth;
 
@@ -46,31 +47,46 @@ class ShopController extends Controller
             ->paginate(10);
         }
 
-        return view('list', ['restaurants' => $restaurants]);
+        return view('list', [
+            'restaurants' => $restaurants
+        ]);
     }
     // 検索機能：searchメソッド（ここまで）
 
     // お店詳細表示：detailメソッド（ここから）
     public function detail($shop_id)
-    {
-        $user_id = Auth::id();
-        $restaurant = Restaurant::where('user_id', $user_id)->find($shop_id);
-        return view('detail', ['restaurant' => $restaurant]);
-    }
+{
+    $user_id = Auth::id();
+    $restaurant = Restaurant::with('categories')
+                        ->where('user_id', $user_id)
+                        ->find($shop_id);
+
+    return view('detail', [
+        'restaurant' => $restaurant
+    ]);
+}
     // お店詳細表示：detailメソッド（ここまで）
 
     // お店登録の画面表示：editメソッド（ここから）
     public function edit($shop_id = null)
-    {
-        $restaurant = $shop_id ? Restaurant::find($shop_id) : new Restaurant;
-        $categories = Category::all();
+{
+    $restaurant = $shop_id ? Restaurant::find($shop_id) : new Restaurant;
+    $categories = Category::all();
 
-        return view('edit', [
-            'restaurant' => $restaurant, 
-            'categories' => $categories,
-            'shop_id' => $shop_id
-        ]);
+    $selected_categories = old('categories') ?? [];
+    if($shop_id && empty($selected_categories)) {
+        $selected_categories = $restaurant->categories->pluck('id')->toArray();
     }
+
+    // dd($selected_categories);
+
+    return view('edit', [
+        'restaurant' => $restaurant, 
+        'categories' => $categories,
+        'selected_categories' => $selected_categories,
+        'shop_id' => $shop_id
+    ]);
+}
     // お店登録の画面表示：editメソッド（ここまで）
 
     // 登録：storeメソッド（ここから）
@@ -80,7 +96,7 @@ class ShopController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:20',
             'name_katakana' => 'required|regex:/^[ァ-ヶー\s]+$/u',
-            'categories' => 'nullable|array',
+            // 'categories' => 'nullable|array',
             'review' => 'required|integer|min:1|max:5',
             'food_picture' => 'nullable|image|max:5120',
             'map_url' => 'nullable|url',
@@ -131,7 +147,8 @@ class ShopController extends Controller
 
         // confirmにデータを保持したまま遷移
         return view('confirm', [
-            'restaurant' => $restaurant
+            'restaurant' => $restaurant,
+            'categories' => $categories
         ]);
 
     }
@@ -140,18 +157,38 @@ class ShopController extends Controller
     // 確認画面の表示：confirmメソッド（ここから）
     public function confirm(Request $request, $shop_id = null)
     {
+
+        // dd($request->all());
+
         // 入力された情報と渡されたshop_idを取得する
         $restaurant = $request->all();
+        $categories = Category::all();
         $shop_id = $request->input('shop_id');
         
         // カテゴリーが選択されていない場合、空の配列を設定
         $restaurant['categories'] = $request->input('categories', []);
+
+        // dd(is_string($restaurant['categories']), $restaurant['categories']); // ステップ1
+        // $decoded_categories = json_decode($restaurant['categories'], true);
+        // $category_ids = array_column($decoded_categories, 'id');
+        // dd($decoded_categories); // ステップ2
+        // dd($category_ids); // ステップ3
+    
+        // カテゴリーがJSON文字列として送信されている場合、配列に変換
+        if (is_string($restaurant['categories'])) {
+            $restaurant['categories'] = json_decode($restaurant['categories'], true);
+        }
+
+        // カテゴリーIDのみを取り出す
+        $restaurant['categories'] = array_column($restaurant['categories'], 'id');
+
+        // dd($restaurant['categories']);
         
         // バリデーション（ここから）
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:20',
             'name_katakana' => 'required|regex:/^[ァ-ヶー\s]+$/u',
-            'categories' => 'nullable|array',
+            // 'categories' => 'nullable|array',
             'review' => 'required|integer|min:1|max:5',
             'food_picture' => 'nullable|image|max:5120',
             'map_url' => 'nullable|url',
@@ -171,6 +208,7 @@ class ShopController extends Controller
         // confirmにデータを保持したまま遷移
         return view('confirm', [
             'restaurant' => $restaurant,
+            'categories' => $categories,
             'shop_id' => $shop_id
         ]);
     }
