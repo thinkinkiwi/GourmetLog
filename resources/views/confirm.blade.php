@@ -22,8 +22,8 @@
         <p>店名: {{ $restaurant['name'] }}</p>
         <p>フリガナ: {{ $restaurant['name_katakana'] }}</p>
         <p>カテゴリー:
-            @if(isset($restaurant['categories']) && is_array($restaurant['categories']) && !empty($restaurant['categories']))
-                @foreach($restaurant['categories'] as $categoryId)
+            @if(!empty($selected_categories))
+                @foreach($selected_categories as $categoryId)
                     {{ $categories->where('id', $categoryId)->first()->name }}
                 @endforeach
             @else

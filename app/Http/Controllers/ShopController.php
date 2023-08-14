@@ -164,6 +164,8 @@ class ShopController extends Controller
         $restaurant = $request->all();
         $categories = Category::all();
         $shop_id = $request->input('shop_id');
+
+        $selected_categories = $request->input('categories', []);
         
         // カテゴリーが選択されていない場合、空の配列を設定
         $restaurant['categories'] = $request->input('categories', []);
@@ -209,7 +211,8 @@ class ShopController extends Controller
         return view('confirm', [
             'restaurant' => $restaurant,
             'categories' => $categories,
-            'shop_id' => $shop_id
+            'shop_id' => $shop_id,
+            'selected_categories' => $selected_categories
         ]);
     }
     // 確認画面の表示：confirmメソッド（ここから）
