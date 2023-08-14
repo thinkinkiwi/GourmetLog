@@ -229,6 +229,9 @@ class ShopController extends Controller
         // confirmからshop_idを受け取る
         $shop_id = $request->input('shop_id');
 
+        // カテゴリーIDをセッションから取得
+        $selected_categories = session('selected_categories', []);
+
         // dd($shop_id);
 
         // shop_idの有無で新規 | 既存を判別、新規ならインスタンス生成
@@ -236,7 +239,7 @@ class ShopController extends Controller
         $restaurant->user_id = Auth::id();
         $restaurant->name = $request->input('name');
         $restaurant->name_katakana = $request->input('name_katakana');
-        $restaurant->categories()->sync($request->input('categories'));
+        $restaurant->categories()->sync($selected_categories);
         $restaurant->review = $request->input('review');
         if ($request->hasFile('food_picture')) {
             $file = $request->file('food_picture');
@@ -268,11 +271,11 @@ class ShopController extends Controller
                         ->withInput();
         }
 
-        // 登録処理が完了したらセッションから選択したカテゴリーの情報を削除
-        $request->session()->forget('selected_categories');
-
         // データ更新（保存）
         $restaurant->save();
+
+        // 登録処理が完了したらセッションから選択したカテゴリーの情報を削除
+        $request->session()->forget('selected_categories');
 
         // listに戻す
         return redirect('list');
