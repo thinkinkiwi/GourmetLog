@@ -78,6 +78,9 @@ class ShopController extends Controller
         $selected_categories = $restaurant->categories->pluck('id')->toArray();
     }
 
+    // セッションから選択されたカテゴリーIDを取得
+    $selected_categories = session('selected_categories', []);
+
     // dd($selected_categories);
 
     return view('edit', [
@@ -184,6 +187,9 @@ class ShopController extends Controller
         // カテゴリーIDのみを取り出す
         $restaurant['categories'] = array_column($restaurant['categories'], 'id');
 
+        // 「修正」ボタン押下時にカテゴリーデータを保持するため、セッションにカテゴリーIDを保存
+        session(['selected_categories' => $selected_categories]);
+
         // dd($restaurant['categories']);
         
         // バリデーション（ここから）
@@ -256,9 +262,14 @@ class ShopController extends Controller
 
         // 「修正する」ボタン押下時にデータを保持したまま編集画面（/edit/{$shop_id}）に戻す
         if($request->input('back') == 'back'){
+            $selected_categories = json_decode($request->input('selected_categories'), true);
             return redirect()->route('edit', ['shop_id' => $shop_id])
+                        ->with('selected_categories', $selected_categories)
                         ->withInput();
         }
+
+        // 登録処理が完了したらセッションから選択したカテゴリーの情報を削除
+        $request->session()->forget('selected_categories');
 
         // データ更新（保存）
         $restaurant->save();

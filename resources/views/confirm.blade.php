@@ -59,9 +59,13 @@
         <!-- 隠しフィールド（ここまで） -->
 
         <!-- 修正・登録ボタン（ここから） -->
-        <button type="submit"  name='back' value="back" class="btn btn-outline-dark">修正する</button>
+        <button type="submit" name="back" value="back" class="btn btn-outline-dark">修正する</button>
         <button type="submit" class="btn btn-primary">登録する</button>
         <!-- 修正・登録ボタン（ここまで） -->
+
+        <!-- 選択したカテゴリーIDの隠しフィールド（ここから） -->
+        <input type="hidden" name="selected_categories" value="{{ json_encode($selected_categories) }}">
+        <!-- 選択したカテゴリーIDの隠しフィールド（ここまで） -->
 
         </form>
         <!-- 確認画面：フォーム（ここまで） -->
