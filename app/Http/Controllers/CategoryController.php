@@ -10,7 +10,13 @@ use Auth;
 
 class CategoryController extends Controller
 {
-    //
+    // ユーザーごとに情報を区別するためのログイン認証コンストラクタ（ここから）
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+    // ユーザーごとに情報を区別するためのログイン認証コンストラクタ（ここまで）
+
     // カテゴリー一覧表示
     public function indexCategories()
     {
@@ -59,6 +65,7 @@ class CategoryController extends Controller
         $category = Category::find($category_id);
         $category->delete();
 
-        return redirect('/category');
+        // return redirect('/category');
+        return response()->json(['success' => true]);
     }
 }
