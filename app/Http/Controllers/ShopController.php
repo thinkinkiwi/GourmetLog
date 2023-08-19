@@ -121,7 +121,9 @@ class ShopController extends Controller
         $restaurant->user_id = Auth::id();
         $restaurant->name = $request->input('name');
         $restaurant->name_katakana = $request->input('name_katakana');
+        if ($shop_id) {
         $restaurant->categories()->sync($request->input('categories'));
+        }
         $restaurant->review = $request->input('review');
         if ($request->hasFile('food_picture')) {
             $file = $request->file('food_picture');
@@ -239,7 +241,9 @@ class ShopController extends Controller
         $restaurant->user_id = Auth::id();
         $restaurant->name = $request->input('name');
         $restaurant->name_katakana = $request->input('name_katakana');
+        if ($shop_id) {
         $restaurant->categories()->sync($selected_categories);
+        }
         $restaurant->review = $request->input('review');
         if ($request->hasFile('food_picture')) {
             $file = $request->file('food_picture');
