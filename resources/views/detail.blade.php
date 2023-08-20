@@ -26,10 +26,19 @@
             </p>
             <p>レビュー： {{ $restaurant->review }}</p>
             <p>画像：<br>
-            <img src="{{ $restaurant->food_picture }}" alt="{{ $restaurant->name }}" class="image-map-size"></p>
+            @if($restaurant->food_picture)
+                    @if(filter_var($restaurant->food_picture, FILTER_VALIDATE_URL))
+                        <!-- 外部のURLの場合 -->
+                        <img src="{{ $restaurant->food_picture }}" alt="Food Picture" style="width: 150px; height: auto;">
+                    @else
+                        <!-- ローカルのパスの場合 -->
+                        <img src="{{ asset('images/' . $restaurant->food_picture) }}" alt="Food Picture" style="width: 150px; height: auto;">
+                    @endif
+                @endif
+            </p>
             <div class="google-map">
-                <p>地図：</p>
-                <iframe src="{{ $restaurant->map_url }}" frameborder="0" style="border:0;" allowfullscreen="" aria-hidden="false" tabindex="0" class="image-map-size"></iframe>
+            <p>地図：</p>
+            <iframe src="{{ $restaurant->map_url }}" frameborder="0" style="border:0;" allowfullscreen="" aria-hidden="false" tabindex="0" class="image-map-size"></iframe>
             </div>
             <p>電話番号： {{ $restaurant->phone_number }}</p>
             <p>コメント： {{ $restaurant->comment }}</p>

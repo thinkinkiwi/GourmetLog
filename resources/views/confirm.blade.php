@@ -33,9 +33,12 @@
         <p>レビュー: {{ $restaurant['review'] }}</p>
         <p>電話番号: {{ $restaurant['phone_number'] }}</p>
         <p>コメント: {{ $restaurant['comment'] }}</p>
-        @if(isset($restaurant['food_picture']))
-        <img src="{{ asset('storage/' . $restaurant['food_picture']) }}" alt="Food Picture">
-        @endif
+        <p>
+            @if(isset($restaurant['food_picture']))
+                <!-- <img src="{{ asset('/upload/' . $restaurant['food_picture']) }}" alt="Food Picture"> -->
+                <img src="{{ asset('images/' . $restaurant['food_picture']->getClientOriginalName()) }}" alt="Food Picture">
+            @endif
+        </p>
         <p>Google Map URL: <a href="{{ $restaurant['map_url'] }}" target="_blank">{{ $restaurant['map_url'] }}</a></p>
         <!-- 確認画面（ここまで） -->
 
@@ -43,9 +46,7 @@
         <input type="hidden" name="name" value="{{ $restaurant['name'] }}">
         <input type="hidden" name="name_katakana" value="{{ $restaurant['name_katakana'] }}">
         <input type="hidden" name="review" value="{{ $restaurant['review'] }}">
-        @if(isset($restaurant['food_picture']))
-        <input type="hidden" name="food_picture" value="{{ $restaurant['food_picture'] }}">
-        @endif
+        <input type="hidden" name="uploaded_image" value="{{ $uploaded_image }}">
         <input type="hidden" name="map_url" value="{{ $restaurant['map_url'] }}">
         <input type="hidden" name="phone_number" value="{{ $restaurant['phone_number'] }}">
         <input type="hidden" name="comment" value="{{ $restaurant['comment'] }}">

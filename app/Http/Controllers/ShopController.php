@@ -55,7 +55,7 @@ class ShopController extends Controller
 
     // お店詳細表示：detailメソッド（ここから）
     public function detail($shop_id)
-{
+    {
     $user_id = Auth::id();
     $restaurant = Restaurant::with('categories')
                         ->where('user_id', $user_id)
@@ -64,12 +64,12 @@ class ShopController extends Controller
     return view('detail', [
         'restaurant' => $restaurant
     ]);
-}
+    }
     // お店詳細表示：detailメソッド（ここまで）
 
     // お店登録の画面表示：editメソッド（ここから）
     public function edit($shop_id = null)
-{
+    {
     $restaurant = $shop_id ? Restaurant::find($shop_id) : new Restaurant;
     $categories = Category::all();
 
@@ -89,7 +89,7 @@ class ShopController extends Controller
         'selected_categories' => $selected_categories,
         'shop_id' => $shop_id
     ]);
-}
+    }
     // お店登録の画面表示：editメソッド（ここまで）
 
     // 登録：storeメソッド（ここから）
@@ -99,7 +99,7 @@ class ShopController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:20',
             'name_katakana' => 'required|regex:/^[ァ-ヶー\s]+$/u',
-            // 'categories' => 'nullable|array',
+            'categories' => 'nullable|array',
             'review' => 'required|integer|min:1|max:5',
             'food_picture' => 'nullable|image|max:5120',
             'map_url' => 'nullable|url',
@@ -116,6 +116,18 @@ class ShopController extends Controller
         }
         // バリデーションエラー時（ここまで）
 
+        // if ($request->hasFile('food_picture')) {
+        $file = $request->file('food_picture');
+        if( !empty($file)){
+            $filename = $file->getClientOriginalName();
+            $move = $file->move(public_path('images'), $filename);
+            if (!$move) {
+                dd('ファイルの移動に失敗しました。', $file->getError());
+            }
+        }else{
+            $filename = "noimage.png";
+        }
+
         // 登録処理（ここから）
         $restaurant = $shop_id ? Restaurant::find($shop_id) : new Restaurant;
         $restaurant->user_id = Auth::id();
@@ -125,24 +137,7 @@ class ShopController extends Controller
         $restaurant->categories()->sync($request->input('categories'));
         }
         $restaurant->review = $request->input('review');
-        if ($request->hasFile('food_picture')) {
-            $file = $request->file('food_picture');
-        
-            // 画像の拡張子を取得
-            $extension = $file->getClientOriginalExtension();
-        
-            // 保存するファイル名を生成（タイムスタンプと拡張子を組み合わせています）
-            $filename = time() . '.' . $extension;
-        
-            // 画像を保存するパス（publicディレクトリ内のimagesフォルダ）
-            $path = public_path('images');
-        
-            // 画像を保存
-            $file->move($path, $filename);
-        
-            // データベースにファイルパスを保存
-            $restaurant->food_picture = 'images/' . $filename;
-        }
+        $restaurant['food_picture'] = $filename;
         $restaurant->map_url = $request->input('map_url');
         $restaurant->phone_number = $request->input('phone_number');
         $restaurant->comment = $request->input('comment');
@@ -193,14 +188,39 @@ class ShopController extends Controller
         session(['selected_categories' => $selected_categories]);
 
         // dd($restaurant['categories']);
-        
+
+        $file = $request->file('food_picture');
+        if( !empty($file)){
+            $filename = $file->getClientOriginalName();
+            $move = $file->move(public_path('images'), $filename);
+            session(['uploaded_image_name' => $filename]);
+            if (!$move) {
+                dd('ファイルの移動に失敗しました。', $file->getError());
+            } else {
+            }
+        }else{
+            $filename = "noimage.png";
+        }
+
+        // if ($request->hasFile('food_picture')) {
+        //     $file = $request->file('food_picture');
+        //     $filename = $file->getClientOriginalName();
+        //     $move = $file->move('../upload/', $filename);
+        //     $restaurant['food_picture'] = $filename;
+        // }else{
+        //     $filename = "noimage.png";
+        // }
+
+        // $restaurant['food_picture'] = $filename;
+        // dd($restaurant['food_picture']);
+
         // バリデーション（ここから）
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:20',
             'name_katakana' => 'required|regex:/^[ァ-ヶー\s]+$/u',
-            // 'categories' => 'nullable|array',
+            'categories' => 'nullable|array',
             'review' => 'required|integer|min:1|max:5',
-            'food_picture' => 'nullable|image|max:5120',
+            'food_picture' => 'nullable',
             'map_url' => 'nullable|url',
             'phone_number' => 'nullable|digits_between:10,15',
             'comment' => 'required|string|max:300',
@@ -209,21 +229,26 @@ class ShopController extends Controller
 
         // バリデーションエラー時（ここから）
         if ($validator->fails()) {
+            // dd($validator->errors()->get('food_picture'));
             return redirect()->route('edit', ['shop_id' => $shop_id])
                 ->withInput()
                 ->withErrors($validator);
         }
         // バリデーションエラー時（ここまで）
 
-        // confirmにデータを保持したまま遷移
+        // dd($restaurant);
+
+        // 確認画面にデータを保持したまま遷移
         return view('confirm', [
             'restaurant' => $restaurant,
-            'categories' => $categories,
             'shop_id' => $shop_id,
-            'selected_categories' => $selected_categories
+            'categories' => $categories,
+            'selected_categories' => $selected_categories,
+            'uploaded_image' => $filename
         ]);
+
     }
-    // 確認画面の表示：confirmメソッド（ここから）
+    // 確認画面の表示：confirmメソッド（ここまで）
 
     // 確認画面の処理：finalizeメソッド（ここから）
     public function finalize(Request $request, $shop_id = null)
@@ -245,24 +270,13 @@ class ShopController extends Controller
         $restaurant->categories()->sync($selected_categories);
         }
         $restaurant->review = $request->input('review');
-        if ($request->hasFile('food_picture')) {
-            $file = $request->file('food_picture');
-        
-            // 画像の拡張子を取得
-            $extension = $file->getClientOriginalExtension();
-        
-            // 保存するファイル名を生成（タイムスタンプと拡張子を組み合わせています）
-            $filename = time() . '.' . $extension;
-        
-            // 画像を保存するパス（publicディレクトリ内のimagesフォルダ）
-            $path = public_path('images');
-        
-            // 画像を保存
-            $file->move($path, $filename);
-        
-            // データベースにファイルパスを保存
-            $restaurant->food_picture = 'images/' . $filename;
-        }
+        // if ($request->hasFile('food_picture')) {
+            // $restaurant->food_picture = $request->input('food_picture');
+        // }
+        // $filename = $request->input('uploaded_image');
+        $filename = session('uploaded_image_name', 'noimage.png');
+        // dd($filename);
+        $restaurant->food_picture = $filename;
         $restaurant->map_url = $request->input('map_url');
         $restaurant->phone_number = $request->input('phone_number');
         $restaurant->comment = $request->input('comment');
@@ -275,11 +289,19 @@ class ShopController extends Controller
                         ->withInput();
         }
 
+        // dd($restaurant);
+        
         // データ更新（保存）
         $restaurant->save();
 
+        // dd($restaurant);
+
         // 登録処理が完了したらセッションから選択したカテゴリーの情報を削除
         $request->session()->forget('selected_categories');
+
+        $request->session()->forget('uploaded_image_name');
+
+        // dd($restaurant);
 
         // listに戻す
         return redirect('list');
