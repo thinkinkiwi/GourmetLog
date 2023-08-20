@@ -19,7 +19,7 @@
             <p>フリガナ： {{ $restaurant->name_katakana }}</p>
             <p>カテゴリー：
             @if($restaurant->categories->isEmpty())
-                未分類
+                その他
             @else
                 {{ $restaurant->categories->pluck('name')->implode(', ') }}
             @endif

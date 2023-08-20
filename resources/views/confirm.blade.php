@@ -27,7 +27,7 @@
                     {{ $categories->where('id', $categoryId)->first()->name }}
                 @endforeach
             @else
-                未分類
+                その他
             @endif
         </p>
         <p>レビュー: {{ $restaurant['review'] }}</p>

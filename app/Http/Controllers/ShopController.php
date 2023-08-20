@@ -202,18 +202,6 @@ class ShopController extends Controller
             $filename = "noimage.png";
         }
 
-        // if ($request->hasFile('food_picture')) {
-        //     $file = $request->file('food_picture');
-        //     $filename = $file->getClientOriginalName();
-        //     $move = $file->move('../upload/', $filename);
-        //     $restaurant['food_picture'] = $filename;
-        // }else{
-        //     $filename = "noimage.png";
-        // }
-
-        // $restaurant['food_picture'] = $filename;
-        // dd($restaurant['food_picture']);
-
         // バリデーション（ここから）
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:20',
@@ -270,10 +258,6 @@ class ShopController extends Controller
         $restaurant->categories()->sync($selected_categories);
         }
         $restaurant->review = $request->input('review');
-        // if ($request->hasFile('food_picture')) {
-            // $restaurant->food_picture = $request->input('food_picture');
-        // }
-        // $filename = $request->input('uploaded_image');
         $filename = session('uploaded_image_name', 'noimage.png');
         // dd($filename);
         $restaurant->food_picture = $filename;

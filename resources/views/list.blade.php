@@ -30,6 +30,7 @@
             <tr>
                 <th>ID</th>
                 <th>店名</th>
+                <th>カテゴリー</th>
                 <th>レビュー</th>
                 <th>コメント</th>
                 <th>詳細</th>
@@ -41,6 +42,13 @@
                 <!-- コメント部分は10文字で…表記になるように制限付与 -->
                 <td>{{ $restaurant->id }}</td>
                 <td>{{ $restaurant->name }}</td>
+                <td>
+                    @if($restaurant->categories->isEmpty())
+                        その他
+                    @else
+                        {{ $restaurant->categories->pluck('name')->implode(', ') }}
+                    @endif
+                </td>
                 <td>{{ $restaurant->review }}</td>
                 <td>{{ \Illuminate\Support\Str::limit($restaurant->comment, 10) }}</td>
                 <td><a href="{{ url('detail/'.$restaurant->id) }}" class="btn btn-success">詳細</a></td>
