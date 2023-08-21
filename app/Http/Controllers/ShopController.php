@@ -101,7 +101,7 @@ class ShopController extends Controller
             'name_katakana' => 'required|regex:/^[ァ-ヶー\s]+$/u',
             'categories' => 'nullable|array',
             'review' => 'required|integer|min:1|max:5',
-            'food_picture' => 'nullable|image|max:5120',
+            'food_picture' => 'nullable',
             'map_url' => 'nullable|url',
             'phone_number' => 'nullable|digits_between:10,15',
             'comment' => 'required|string|max:300',
@@ -115,6 +115,22 @@ class ShopController extends Controller
                 ->withErrors($validator);
         }
         // バリデーションエラー時（ここまで）
+
+        $selected_categories = $request->input('categories', []);
+        
+        // カテゴリーが選択されていない場合、空の配列を設定
+        $restaurant['categories'] = $request->input('categories', []);
+
+        // カテゴリーがJSON文字列として送信されている場合、配列に変換
+        if (is_string($restaurant['categories'])) {
+            $restaurant['categories'] = json_decode($restaurant['categories'], true);
+        }
+
+        // カテゴリーIDのみを取り出す
+        $restaurant['categories'] = array_column($restaurant['categories'], 'id');
+
+        // 「修正」ボタン押下時にカテゴリーデータを保持するため、セッションにカテゴリーIDを保存
+        session(['selected_categories' => $selected_categories]);
 
         // if ($request->hasFile('food_picture')) {
         $file = $request->file('food_picture');
@@ -134,7 +150,7 @@ class ShopController extends Controller
         $restaurant->name = $request->input('name');
         $restaurant->name_katakana = $request->input('name_katakana');
         if ($shop_id) {
-        $restaurant->categories()->sync($request->input('categories'));
+            $restaurant->categories()->sync($selected_categories);
         }
         $restaurant->review = $request->input('review');
         $restaurant['food_picture'] = $filename;
@@ -148,7 +164,9 @@ class ShopController extends Controller
         // confirmにデータを保持したまま遷移
         return view('confirm', [
             'restaurant' => $restaurant,
-            'categories' => $categories
+            'categories' => $categories,
+            'selected_categories' => $selected_categories,
+            'uploaded_image' => $filename
         ]);
 
     }
@@ -157,6 +175,28 @@ class ShopController extends Controller
     // 確認画面の表示：confirmメソッド（ここから）
     public function confirm(Request $request, $shop_id = null)
     {
+
+        // バリデーション（ここから）
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:20',
+            'name_katakana' => 'required|regex:/^[ァ-ヶー\s]+$/u',
+            'categories' => 'nullable|array',
+            'review' => 'required|integer|min:1|max:5',
+            'food_picture' => 'nullable',
+            'map_url' => 'nullable|url',
+            'phone_number' => 'nullable|digits_between:10,15',
+            'comment' => 'required|string|max:300',
+        ]);
+        // バリデーション（ここまで）
+
+        // バリデーションエラー時（ここから）
+        if ($validator->fails()) {
+            // dd($validator->errors()->get('food_picture'));
+            return redirect()->route('edit', ['shop_id' => $shop_id])
+                ->withInput()
+                ->withErrors($validator);
+        }
+        // バリデーションエラー時（ここまで）
 
         // dd($request->all());
 
@@ -202,28 +242,6 @@ class ShopController extends Controller
             $filename = "noimage.png";
         }
 
-        // バリデーション（ここから）
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:20',
-            'name_katakana' => 'required|regex:/^[ァ-ヶー\s]+$/u',
-            'categories' => 'nullable|array',
-            'review' => 'required|integer|min:1|max:5',
-            'food_picture' => 'nullable',
-            'map_url' => 'nullable|url',
-            'phone_number' => 'nullable|digits_between:10,15',
-            'comment' => 'required|string|max:300',
-        ]);
-        // バリデーション（ここまで）
-
-        // バリデーションエラー時（ここから）
-        if ($validator->fails()) {
-            // dd($validator->errors()->get('food_picture'));
-            return redirect()->route('edit', ['shop_id' => $shop_id])
-                ->withInput()
-                ->withErrors($validator);
-        }
-        // バリデーションエラー時（ここまで）
-
         // dd($restaurant);
 
         // 確認画面にデータを保持したまま遷移
@@ -254,9 +272,9 @@ class ShopController extends Controller
         $restaurant->user_id = Auth::id();
         $restaurant->name = $request->input('name');
         $restaurant->name_katakana = $request->input('name_katakana');
-        if ($shop_id) {
-        $restaurant->categories()->sync($selected_categories);
-        }
+        // if ($shop_id) {
+        // $restaurant->categories()->sync($selected_categories);
+        // }
         $restaurant->review = $request->input('review');
         $filename = session('uploaded_image_name', 'noimage.png');
         // dd($filename);
@@ -277,6 +295,8 @@ class ShopController extends Controller
         
         // データ更新（保存）
         $restaurant->save();
+
+        $restaurant->categories()->sync($selected_categories);
 
         // dd($restaurant);
 

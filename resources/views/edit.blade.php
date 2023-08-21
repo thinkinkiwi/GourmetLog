@@ -82,15 +82,6 @@
             </div>
 
             <div>
-                @if($restaurant->food_picture)
-                    @if(filter_var($restaurant->food_picture, FILTER_VALIDATE_URL))
-                        <!-- 外部のURLの場合 -->
-                        <img src="{{ $restaurant->food_picture }}" alt="Food Picture" style="width: 150px; height: auto;">
-                    @else
-                        <!-- ローカルのパスの場合 -->
-                        <img src="/upload/{{ $restaurant->food_picture }}" alt="Food Picture" style="width: 150px; height: auto;">
-                    @endif
-                @endif
                 <label for="food_picture">画像:</label>
                 <input type="file" 
                        name="food_picture"
@@ -99,6 +90,16 @@
                 @error('food_picture')
                     <div>{{ $message }}</div>
                 @enderror
+                <br>
+                @if($restaurant->food_picture)
+                    @if(filter_var($restaurant->food_picture, FILTER_VALIDATE_URL))
+                        <!-- 外部のURLの場合 -->
+                        <img src="{{ $restaurant->food_picture }}" alt="Food Picture" style="width: 150px; height: auto;">
+                    @else
+                        <!-- ローカルのパスの場合 -->
+                        <img src="/images/{{ $restaurant->food_picture }}" alt="Food Picture" style="width: 150px; height: auto;">
+                    @endif
+                @endif
             </div>
 
             <div>
