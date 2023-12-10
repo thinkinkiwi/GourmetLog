@@ -14,9 +14,12 @@
                         </div>
                     @endif
 
+                    <p style="text-align: center;">
                     {{ __('You are logged in!') }}
+                    </p>
+                    
                     <a href="{{ route('dashboard') }}">
-                        <p>トップページに移動する</p>
+                        <p style="text-align: center; margin-top: 20px;">トップページに移動する</p>
                     </a>
                 </div>
             </div>
