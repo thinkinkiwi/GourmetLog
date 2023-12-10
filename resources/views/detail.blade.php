@@ -16,7 +16,7 @@
         <!-- メインボディ（ここから） -->
         <div class="mainBody">
             <h3>{{ $restaurant->name }} 詳細</h3>
-            <p>フリガナ： {{ $restaurant->name_katakana }}</p>
+            <p>{{ $restaurant->name_katakana }}</p>
             <p>カテゴリー：
             @if($restaurant->categories->isEmpty())
                 その他
@@ -37,11 +37,13 @@
                 @endif
             </p>
             <div class="google-map">
-            <p>地図：</p>
-            <iframe src="{{ $restaurant->map_url }}" frameborder="0" style="border:0;" allowfullscreen="" aria-hidden="false" tabindex="0" class="image-map-size"></iframe>
+            <p>Google Map URL：</p>
+            <div id="map" class="image-map-size"></div>
             </div>
-            <p>電話番号： {{ $restaurant->phone_number }}</p>
-            <p>コメント： {{ $restaurant->comment }}</p>
+            <p>電話番号：<br>
+            {{ $restaurant->phone_number }}</p>
+            <p>コメント：<br>
+            {{ $restaurant->comment }}</p>
             <a href="{{ url('/list') }}" class="btn btn-outline-dark">お店リストに戻る</a>
         </div>
         <!-- メインボディ（ここまで） -->
@@ -52,3 +54,22 @@
 </div>
 <!-- コンテンツ大枠(ここまで) -->
 @endsection
+
+<script>
+
+function fetchExpandedUrl(shortUrl, callback) {
+    fetch('/expand-url?url=' + encodeURIComponent(shortUrl))
+        .then(response => response.json())
+        .then(data => {
+            callback(data.expanded_url);
+        });
+}
+
+    function initMap() {
+    @isset($coordinates)
+        var uluru = {lat: parseFloat("{{ $coordinates['lat'] }}"), lng: parseFloat("{{ $coordinates['lng'] }}")};
+        var map = new google.maps.Map(document.getElementById('map'), {zoom: 16, center: uluru});
+        var marker = new google.maps.Marker({position: uluru, map: map});
+    @endisset
+}
+</script>

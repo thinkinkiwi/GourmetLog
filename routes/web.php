@@ -20,7 +20,7 @@ Route::get('/', function () {
 // ダッシュボード表示
 Route::get('/dashboard', function () {
     return view('dashboard');
-});
+})->name('dashboard');
 
 // 一覧表示
 Route::get('/list', [App\Http\Controllers\ShopController::class, 'index']);

@@ -15,6 +15,9 @@
                     @endif
 
                     {{ __('You are logged in!') }}
+                    <a href="{{ route('dashboard') }}">
+                        <p>トップページに移動する</p>
+                    </a>
                 </div>
             </div>
         </div>

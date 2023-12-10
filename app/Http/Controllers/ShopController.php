@@ -9,6 +9,7 @@ use App\Models\Category;
 use App\Models\CategoryTags;
 use Validator;
 use Auth;
+use Illuminate\Support\Facades\Http;
 
 class ShopController extends Controller
 {
@@ -61,11 +62,37 @@ class ShopController extends Controller
                         ->where('user_id', $user_id)
                         ->find($shop_id);
 
+    // 短縮URLを展開
+    $expandedUrl = $this->expandShortUrl($restaurant->map_url);
+    // dd($expandedUrl);
+    
+    // 緯度経度を取得
+    $coordinates = $this->getCoordinatesFromMapUrl($expandedUrl);
+    // dd($coordinates);
+
     return view('detail', [
-        'restaurant' => $restaurant
+        'restaurant' => $restaurant, 
+        'coordinates' => $coordinates
     ]);
     }
     // お店詳細表示：detailメソッド（ここまで）
+
+    public function expandUrl(Request $request)
+    {
+        $shortUrl = $request->input('url');
+        $response = Http::head($shortUrl);
+        return response()->json(['expanded_url' => $response->headers()['Location'][0]]);
+    }
+
+    private function getCoordinatesFromMapUrl($mapUrl)
+    {
+        $regex = '/@(-?\d+\.\d+),(-?\d+\.\d+),\d+z/';
+        $match = preg_match($regex, $mapUrl, $results);  // preg_matchを使用
+        if ($match) {
+            return ['lat' => $results[1], 'lng' => $results[2]];
+        }
+        return null;
+    }
 
     // お店登録の画面表示：editメソッド（ここから）
     public function edit($shop_id = null)
@@ -296,6 +323,7 @@ class ShopController extends Controller
         // データ更新（保存）
         $restaurant->save();
 
+        // カテゴリーの同期をデータセーブの後にすることでエラーを回避
         $restaurant->categories()->sync($selected_categories);
 
         // dd($restaurant);
