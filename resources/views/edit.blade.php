@@ -135,11 +135,7 @@
                     <tr>
                         <td><label for="comment">コメント:</label></td>
                         <td>
-                            <textarea name="comment" 
-                                    id="comment" 
-                                    required>
-                                    {{ old('comment', $restaurant->comment ?? '') }}
-                            </textarea>
+                        <textarea name="comment" id="comment" required style="padding: 5px;">{{ old('comment', $restaurant->comment ?? '') }}</textarea>
                             @error('comment')
                                 <div>{{ $message }}</div>
                             @enderror
